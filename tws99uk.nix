@@ -6,6 +6,7 @@ pkgs.mkShell {
     pkgs.gitAndTools.gh
     pkgs.nodejs-10_x
     pkgs.nodePackages.yarn
+    pkgs.php
   ];
 
   shellHook = ''
@@ -13,5 +14,7 @@ pkgs.mkShell {
     export RPROMPT="%F{red}$WORK_ORG"
 
     export PATH="$(yarn global bin):$PATH"
+    export PATH="$HOME/.symfony/bin:$PATH"
+
   '';
 }
