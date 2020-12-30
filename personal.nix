@@ -9,6 +9,7 @@ pkgs.mkShell {
     pkgs.heroku
     pkgs.awscli2
     pkgs.ssm-session-manager-plugin
+    pkgs.terraform_0_13
   ];
 
   shellHook = ''
@@ -16,9 +17,8 @@ pkgs.mkShell {
     export DOTNET_ROOT=$(dirname $(realpath $(which dotnet)))
     export PATH=$PATH:/home/antony/.dotnet/tools
 
-    export AWS_PROFILE=a_dev
     export WORK_ORG=ant
-    export RPROMPT="%F{green}$WORK_ORG($AWS_PROFILE)"
+    export RPROMPT="%F{blue}$WORK_ORG"
 
     if [[ "$(dotnet tool list -g|grep amazon.lambda.tools | wc -l)" -eq 0 ]]
     then
