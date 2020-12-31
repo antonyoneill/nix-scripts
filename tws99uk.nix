@@ -1,12 +1,35 @@
-
-{ pkgs ? import <nixpkgs> {} }:
-pkgs.mkShell {
+let
+  pkgs = import <nixpkgs> {};
+  stdenv = pkgs.stdenv;
+  phpIni = pkgs.runCommand "php.ini"
+  { options = ''
+      memory_limit = -1
+    '';
+  }
+  ''
+    cat "${pkgs.php}/etc/php.ini" > $out
+    echo "$options" >> $out
+  '';
+  phpOverride = stdenv.mkDerivation rec {
+    name = "php-with-custom-ini";
+    buildInputs = [
+      pkgs.php
+      pkgs.makeWrapper
+    ];
+    buildCommand = ''
+      makeWrapper ${pkgs.php}/bin/php $out/bin/php --add-flags -c --add-flags "${phpIni}"
+    '';
+  };
+in
+stdenv.mkDerivation {
+  name = "tws99uk";
   buildInputs = [
-    pkgs.jetbrains.webstorm
+    pkgs.jetbrains.phpstorm
     pkgs.gitAndTools.gh
     pkgs.nodejs-10_x
     pkgs.nodePackages.yarn
-    pkgs.php
+    phpOverride
+    pkgs.php74Packages.composer
   ];
 
   shellHook = ''
