@@ -4,6 +4,12 @@ let
   phpIni = pkgs.runCommand "php.ini"
   { options = ''
       memory_limit = -1
+	  zend_extension=${pkgs.php74Extensions.xdebug}/lib/php/extensions/xdebug.so
+	  max_execution_time = 0
+	  xdebug.remote_autostart = 1
+	  xdebug.remote_enable = 1
+	  xdebug.log="/tmp/xdebug.log"
+	  xdebug.remote_log="/tmp/remote_xdebug.log"
     '';
   }
   ''
@@ -13,8 +19,9 @@ let
   phpOverride = stdenv.mkDerivation rec {
     name = "php-with-custom-ini";
     buildInputs = [
-      pkgs.php
       pkgs.makeWrapper
+      pkgs.php
+      pkgs.php74Extensions.xdebug
     ];
     buildCommand = ''
       makeWrapper ${pkgs.php}/bin/php $out/bin/php --add-flags -c --add-flags "${phpIni}"
